@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>product list</title>
+</head>
+<body>
+<h1>Products</h1>
+<ul>
+    {% for product in products %}
+        <li>
+            <h2>{{ product.name }}</h2>
+            <p>{{ product.description }}</p>
+            <p>${{ product.price }}</p>
+            <form action="{% url 'checkout' product.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Buy Now</button>
+            </form>
+        </li>
+    {% endfor %}
+</ul>
+</body>
+</html>

@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>product list</title>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
 <h1>Products</h1>
@@ -12,7 +13,9 @@
             <h2>{{ product.name }}</h2>
             <p>{{ product.description }}</p>
             <p>${{ product.price }}</p>
-            <form action="{% url 'checkout' product.id %}" method="post">
+            <p>{{ product.stripe_product_id }}</p>
+            <p>{{ product.stripe_price_id }}</p>
+            <form action="{% url 'checkout' product.id %}">
                 {% csrf_token %}
                 <button type="submit">Buy Now</button>
             </form>

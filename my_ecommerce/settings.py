@@ -131,5 +131,5 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 import os
 
-# STRIPE_TEST_PUBLIC_KEY = os.getenv('pk_test_51QWwwTLgKEZ8FUNSHhgZA8p7oVyMvUIhf1va79Zne7ai92YC3ULOvFG1b6evMDu6sAyHXcnm2wxj7dsQz6mHdYKS00dA0pDmtd')
+STRIPE_TEST_PUBLIC_KEY = os.getenv('pk_test_51QWwwTLgKEZ8FUNSHhgZA8p7oVyMvUIhf1va79Zne7ai92YC3ULOvFG1b6evMDu6sAyHXcnm2wxj7dsQz6mHdYKS00dA0pDmtd')
 STRIPE_TEST_SECRET_KEY = os.getenv('sk_test_51QWwwTLgKEZ8FUNSILqkqMmHvtD6VaxD09dWpObjSlSBlXplUjOf03sCaWcPm65Wc0nbMV75UdKM0UDoL9KP9yrm006zFPtWio')

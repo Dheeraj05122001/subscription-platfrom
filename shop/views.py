@@ -1,54 +1,38 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,get_object_or_404
 from .models import Product
+from django.http import JsonResponse
 import stripe
 stripe.api_key = "sk_test_51QWwwTLgKEZ8FUNSILqkqMmHvtD6VaxD09dWpObjSlSBlXplUjOf03sCaWcPm65Wc0nbMV75UdKM0UDoL9KP9yrm006zFPtWio"
 
-def add_product(request):
-    if request.method == 'POST':
-        name = request.POST['name']
-        description = request.POST['description']
-        price = request.POST['price']
-
-        # Create a product in Stripe
-        stripe_product = stripe.Product.create(
-            name=name,
-            description=description,
-        )
-
-        # Create a price for the product
-        stripe_price = stripe.Price.create(
-            unit_amount=int(float(price) * 100),
-            currency='usd',
-            product=stripe_product.id,
-        )
-
-        # Create and save the new product in your database
-        Product.objects.create(
-            name=name,
-            description=description,
-            price=price,
-            stripe_product_id=stripe_product.id,
-            stripe_price_id=stripe_price.id,
-        )
-        return redirect('product_list')  #
-
-    return render(request, 'shop/add_product.html')
 
 def product_list(request):
-    products = Product.objects.all()
+    # products = Product.objects.all()
+    products = stripe.Product.list()
+
+    product_data = []
+    for product in products['data']:
+        price = stripe.Price.list(product=product['id'])
+        product_data.append({
+            'name': product['name'],
+            'description': product['description'],
+            'price': price['data'][0]['unit_amount'] / 100,
+            'stripe_product_id': product['id'],
+            'stripe_price_id': price['data'][0]['id'],
+        })
     return render(request, 'shop/product_list.html', {'products': products})
 
-def checkout(request, product_id):
-    product = Product.objects.get(id=product_id)
-    if request.method == 'POST':
-        # Create a new Stripe Checkout session
-        session = stripe.checkout.Session.create(
+def checkout(request,stripe_product_id):
+    product = stripe.Product.retrieve(stripe_product_id)
+    price = stripe.Price.list(product=stripe_product_id)['data'][0]
+    checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=[{
                 'price_data':
                     {'currency': 'usd',
-                    'product_data': {'name': product.name,},
-                    'unit_amount': int(product.price * 100),
+                    'product_data': {'name': product['name'],
+                                     'description':product['description'],},
+                    'unit_amount': price['unit_amount'],
+
                      },
                 'quantity': 1,
             }],
@@ -56,8 +40,7 @@ def checkout(request, product_id):
             success_url=request.build_absolute_uri('/success/'),
             cancel_url=request.build_absolute_uri('/cancel/'),
         )
-        return redirect(session.url, code=303)
-    return render(request, 'shop/checkout.html', {'product': product})
+    return redirect(checkout_session.url, code=303)
 
 def success(request):
     return render(request, 'shop/success.html')

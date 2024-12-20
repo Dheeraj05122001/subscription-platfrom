@@ -8,7 +8,3 @@ class Product(models.Model):
     stripe_price_id = models.CharField(max_length=255, blank=True, null=True)
 
 
-class Subscription(models.Model):
-    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
-    stripe_subscription_id = models.CharField(max_length=255)
-    active = models.BooleanField(default=True)

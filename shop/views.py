@@ -6,7 +6,6 @@ stripe.api_key = "sk_test_51QWwwTLgKEZ8FUNSILqkqMmHvtD6VaxD09dWpObjSlSBlXplUjOf0
 
 
 def product_list(request):
-    # products = Product.objects.all()
     products = stripe.Product.list()
 
     product_data = []

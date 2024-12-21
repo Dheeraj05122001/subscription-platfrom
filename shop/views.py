@@ -2,10 +2,10 @@ from django.shortcuts import render, redirect
 import stripe
 stripe.api_key = "sk_test_51QWwwTLgKEZ8FUNSILqkqMmHvtD6VaxD09dWpObjSlSBlXplUjOf03sCaWcPm65Wc0nbMV75UdKM0UDoL9KP9yrm006zFPtWio"
 
-
 def product_list(request):
     products = stripe.Product.list()
     return render(request, 'shop/product_list.html', {'products': products})
+
 
 def checkout(request,stripe_product_id):
     product = stripe.Product.retrieve(stripe_product_id)
@@ -18,7 +18,6 @@ def checkout(request,stripe_product_id):
                     'product_data': {'name': product['name'],
                                      'description':product['description'],},
                     'unit_amount': price['unit_amount'],
-
                      },
                 'quantity': 1,
             }],
